@@ -6,11 +6,11 @@ from utils import get_all
 from utils import get_class
 from datasets import get_test_transform, get_label_replacers
 
-API_TOKEN = '1807342525:AAGYj1A5WukNH1_cn8f2LGn1R-uunW3EVWY'
+API_TOKEN = '1901597833:AAFPAW6c3nYXZZ-06cvd7BZ4BEGfe8X4ts0'
 
 bot = telebot.TeleBot(API_TOKEN)
 
-m = get_densenet_121('cpu', '../checkpoints/densenet121(64,64).ckpt')
+m = get_densenet_121('cpu', '../checkpoints/dense121(64,64).ckpt')
 
 
 @bot.message_handler(commands=['start'])
