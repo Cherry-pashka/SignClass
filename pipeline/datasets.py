@@ -70,7 +70,6 @@ class TestDataset(Dataset):
     def __len__(self):
         return len(self.data_df)
 
-
 def get_ablu_transform() -> Callable:
     alba = [
         albu.ImageCompression(quality_lower=60, quality_upper=100),
@@ -84,8 +83,9 @@ def get_ablu_transform() -> Callable:
 def get_train_transform() -> Callable:
     tran = [
 
-        transforms.Resize((128, 128)),
+        transforms.Resize(IMG_SIZE),
         transforms.RandomRotation(3),
+        transforms.ColorJitter(brightness=0.5, contrast=0.2, saturation=0, hue=0),
         transforms.GaussianBlur(1),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -97,7 +97,7 @@ def get_train_transform() -> Callable:
 
 def get_test_transform() -> Callable:
     tran = [
-        transforms.Resize((128, 128)),
+        transforms.Resize(IMG_SIZE),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406],
                              std=[0.229, 0.224, 0.225]),

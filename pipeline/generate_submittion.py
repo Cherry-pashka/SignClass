@@ -1,14 +1,33 @@
-import pandas as pd
-from constants import *
-from torch.utils.data import DataLoader
-import torch.nn as nn
-import torch
 import numpy as np
-from PIL import Image
-from datasets import get_label_replacers
+import pandas as pd
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
+from tqdm import tqdm
+
+from constants import *
+
+
+def generate_one_model_submit(
+        model: nn.Module,
+        test_loader: DataLoader,
+        name: str,
+        device: str = DEVICE) -> np.ndarray:
+    y_pred = np.array([])
+    filenames = []
+    model.eval()
+    with torch.no_grad():
+        for i, (filename, img) in tqdm(enumerate(test_loader), total=len(test_loader)):
+            img = img.to(device)
+            pred = model(img)
+            filenames += filename
+            y_pred = np.concatenate([y_pred, pred.argmax(1).cpu().numpy()], axis=0)
+            del pred, img
+    return y_pred
 
 
 def get_empty_submit(path: str) -> pd.DataFrame:
+    """Return empty """
     test_df = pd.read_csv(path).filename
     zero = pd.DataFrame({'filename': test_df, 'label': ['-'] * (test_df.shape[0])})
     zero = zero.set_index('filename')
@@ -21,7 +40,7 @@ def generate_submit(
         test_loader: DataLoader,
         name: str,
         device: str = DEVICE,
-        visual: bool = False) -> None:
+        visual: bool = False) -> np.ndarray:
     model.eval()
     model2.eval()
 
@@ -30,25 +49,12 @@ def generate_submit(
     with torch.no_grad():
         for i, (filename, img) in enumerate(test_loader):
             img = img.to(device)
+
             pred = model(img)
             pred2 = model2(img)
-            res2 = pred2.sort(descending=True).values[:, 0] - pred2.sort(descending=True).values[:, 1]
-            inds2 = pred2.sort(descending=True).indices[:, 0:5]
+            pred_all = pred + pred2
+            arg_pred = pred_all.argmax(1).cpu().numpy()
 
-            res = pred.sort(descending=True).values[:, 0] - pred.sort(descending=True).values[:, 1]
-            inds = pred.sort(descending=True).indices[:, 0:5]
-            for j in range(len(res)):
-                if pred.argmax(1).cpu().numpy()[j] != pred2.argmax(1).cpu().numpy()[j] or res[j] < 2 or res2[j] < 2:
-                    counter += 1
-                    if visual:
-                        print(filename[j].split("/")[1], '           ', res[j], '  ', inds[j])
-                        print(filename[j].split("/")[1], '           ', res2[j], '  ', inds2[j])
-                        display(Image.open(f'{FOLDER_PATH}/{filename[j]}'))
+            y_pred = np.concatenate([y_pred, arg_pred], axis=0)
 
-            y_pred = np.concatenate([y_pred, pred.argmax(1).cpu().numpy()], axis=0)
-    zero = get_empty_submit(SAMPLE_SUBMISSION_PATH)
-    zero.label = y_pred
-    label2int, int2label = get_label_replacers(TRAIN_DATAFRAME_PATH)
-    zero.label = zero.label.replace(int2label)
-    zero.to_csv(f'{name}_submit.csv')
-    print(counter)
+    return y_pred
