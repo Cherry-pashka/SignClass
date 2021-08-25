@@ -34,9 +34,10 @@ def get_densenet_121(device: str = DEVICE,
             print("Wrong checkpoint")
     return model
 
+
 def get_vgg_19(device: str = DEVICE,
-                     ckpt_path: Optional[str] = None
-                     ) -> nn.Module:
+               ckpt_path: Optional[str] = None
+               ) -> nn.Module:
     model = models.vgg19(True)
     model.classifier = nn.Sequential(nn.Linear(in_features=25088, out_features=4096, bias=True),
                                      nn.ReLU(inplace=True),
