@@ -17,6 +17,7 @@ d = {'1': 'Предупреждающие знаки', '2': 'Знаки прио
 
 
 def get_class(path: str, model, ckpt_path: str = None, transform=None) -> str:
+    """Returns class of image predicted by the model"""
     label2int, int2label = get_label_replacers(TRAIN_DATAFRAME_PATH)
     x = Image.open(path)
     x = x.convert('RGB')
@@ -33,11 +34,12 @@ def get_class(path: str, model, ckpt_path: str = None, transform=None) -> str:
 
 
 def get_all(f):
+    """Returns information about predicted class of traffic sign"""
     if f == '3_17':
         return 'Знак 3.17.1-3.17.3: \nТаможня-Опасность-Контроль', 'https://media.am.ru/pdd/sign/m/3.17.3.png', 'https://www.drom.ru/pdd/pdd/signs/#65400', '3. Запрещающие знаки'
-    if f=='smoke':
+    if f == 'smoke':
         return "Знак: \nКурение запрещено-Пользование открытым огнем и курение запрещено", 'http://www.kuzalians.ru/images/ooo_price/e919330e-32cd-11e1-bc36-0025b3ad0991_1.jpg', 'http://87.rospotrebnadzor.ru/index.php/deyatelnost/zashchita-prav-potrebitelej/494-trebovaniya-k-znaku-o-zaprete-kureniya', 'Просто знак'
-    if f=='unknown':
+    if f == 'unknown':
         return "Тут ничего нет", 'https://sundownaudio.ru/upload/iblock/150/150f20206310ac30be38e1204dc24ab8.jpg', 'https://www.google.com/search?q=%D0%B8%D0%B7%D0%B2%D0%B8%D0%BD%D0%B8%D1%82%D0%B5,+%D0%BD%D0%BE+%D0%BF%D0%BE%D0%B4%D1%80%D0%BE%D0%B1%D0%BD%D0%B5%D0%B5+%D0%BD%D0%B5%D0%BA%D1%83%D0%B4%D0%B0', 'Да нету тут знака'
     if f in trans:
         f = trans[f]
@@ -46,4 +48,3 @@ def get_all(f):
     f = f.replace('_', '.') + '.'
     if f in parsed2.index:
         return parsed2.loc[f].title, parsed2.loc[f].img, parsed1.loc[f].link, f[0] + '. ' + d[f[0]]
-

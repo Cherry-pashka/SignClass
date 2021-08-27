@@ -1,10 +1,10 @@
 import telebot
 from telebot import types
-from models import get_densenet_121
 
+from datasets import get_test_transform, get_label_replacers
+from models import get_densenet_121
 from utils import get_all
 from utils import get_class
-from datasets import get_test_transform, get_label_replacers
 
 API_TOKEN = '1901597833:AAFPAW6c3nYXZZ-06cvd7BZ4BEGfe8X4ts0'
 

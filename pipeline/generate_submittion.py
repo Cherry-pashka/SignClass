@@ -13,6 +13,7 @@ def generate_one_model_submit(
         test_loader: DataLoader,
         name: str,
         device: str = DEVICE) -> np.ndarray:
+    """Returns labels predicted by one model"""
     y_pred = np.array([])
     filenames = []
     model.eval()
@@ -27,7 +28,7 @@ def generate_one_model_submit(
 
 
 def get_empty_submit(path: str) -> pd.DataFrame:
-    """Return empty """
+    """Returns empty submission"""
     test_df = pd.read_csv(path).filename
     zero = pd.DataFrame({'filename': test_df, 'label': ['-'] * (test_df.shape[0])})
     zero = zero.set_index('filename')
@@ -41,6 +42,7 @@ def generate_submit(
         name: str,
         device: str = DEVICE,
         visual: bool = False) -> np.ndarray:
+    """Returns labels predicted by two model"""
     model.eval()
     model2.eval()
 

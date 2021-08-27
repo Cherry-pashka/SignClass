@@ -1,16 +1,20 @@
-from torch.utils.data import Dataset, DataLoader
-from constants import *
-import pandas as pd
 import os
-from PIL import Image
-from typing import Callable, Dict, Mapping, Tuple, Optional, Union
-import torch
-import numpy as np
+from typing import Callable, Tuple, Optional
+
 import albumentations as albu
-from torchvision import datasets, models, transforms
+import numpy as np
+import pandas as pd
+import torch
+from PIL import Image
+from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms
+
+from constants import *
 
 
 class ImageDataset(Dataset):
+    """Dataset for train classification model"""
+
     def __init__(self,
                  df: pd.DataFrame,
                  path: str,
@@ -24,6 +28,7 @@ class ImageDataset(Dataset):
         self.albu_trans = albu_trans
 
     def __getitem__(self, x: int) -> Tuple[torch.Tensor, torch.LongTensor]:
+        """Returns label and Tensor of image """
         name, label = self.dataframe.iloc[x].values
         x = self.load_sample(name)
         if self.albu_trans:
@@ -33,15 +38,19 @@ class ImageDataset(Dataset):
         return x, torch.LongTensor([label, ])
 
     def load_sample(self, name: str) -> Image:
+        """Function for load image"""
         name = Image.open(os.path.join(self.path, name))
         name.load()
         return name
 
     def __len__(self) -> int:
+        """Returns the length od dataset"""
         return len(self.dataframe)
 
 
 class TestDataset(Dataset):
+    """Dataset for test/validation classification model"""
+
     def __init__(self,
                  data_df: pd.DataFrame,
                  path: str,
@@ -51,6 +60,7 @@ class TestDataset(Dataset):
         self.transform = transform
 
     def __getitem__(self, idx: int):
+        """Returns label and Tensor of image """
         image_name = self.data_df.iloc[idx].filename
 
         # читаем картинку
@@ -63,12 +73,15 @@ class TestDataset(Dataset):
         return image_name, image
 
     def load_sample(self, name: str) -> Image:
+        """Function for load image"""
         name = Image.open(os.path.join(self.path, name))
         name.load()
         return name
 
     def __len__(self):
+        """Returns the length od dataset"""
         return len(self.data_df)
+
 
 def get_ablu_transform() -> Callable:
     alba = [
@@ -81,6 +94,7 @@ def get_ablu_transform() -> Callable:
 
 
 def get_train_transform() -> Callable:
+    """Function return train transforms for images"""
     tran = [
 
         transforms.Resize(IMG_SIZE),
@@ -96,6 +110,7 @@ def get_train_transform() -> Callable:
 
 
 def get_test_transform() -> Callable:
+    """Function return text transforms for images"""
     tran = [
         transforms.Resize(IMG_SIZE),
         transforms.ToTensor(),
@@ -106,6 +121,7 @@ def get_test_transform() -> Callable:
 
 
 def get_label_replacers(df_path: str = TRAIN_DATAFRAME_PATH) -> Tuple[dict, dict]:
+    """Return dictionaries for changing labels in dataframe"""
     label2int = {}
     int2label = {}
     data = pd.read_csv(df_path)
@@ -118,6 +134,7 @@ def get_label_replacers(df_path: str = TRAIN_DATAFRAME_PATH) -> Tuple[dict, dict
 
 
 def get_train_loader(train_dataset: Dataset) -> DataLoader:
+    """Returns train loader"""
     return DataLoader(dataset=train_dataset,
                       batch_size=32,
                       shuffle=True,
@@ -126,6 +143,7 @@ def get_train_loader(train_dataset: Dataset) -> DataLoader:
 
 
 def get_test_loader(test_dataset: Dataset) -> DataLoader:
+    """Returns test loader"""
     return DataLoader(dataset=test_dataset,
                       batch_size=32,
                       shuffle=False,

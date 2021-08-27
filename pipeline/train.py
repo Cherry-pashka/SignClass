@@ -33,6 +33,7 @@ def plot_history(train_history: list, val_history: list, title: str = 'loss') ->
 
 
 def show_train_images():
+    """Function shows images from train dataset"""
     df = pd.read_csv(TRAIN_DATAFRAME_PATH)
     cols = 6
 
@@ -66,6 +67,7 @@ def test(
         val_loss_log: list,
         device: str = DEVICE
 ) -> (float, float, float):
+    """Function for test model"""
     model.eval()
 
     y_pred_val = np.array([])
@@ -99,6 +101,7 @@ def train_epoch(
         opt: torch.optim.Optimizer,
         train_loss_log: list,
         device: str = DEVICE) -> (float, float, float):
+    """Function for train one epoch"""
     model.train()
 
     y_pred = np.array([])
@@ -144,6 +147,7 @@ def train(
         save_checkpoint_path: str = 'point.ckpt',
         shed: torch.optim.lr_scheduler = None
 ) -> None:
+    """Function for train model"""
     train_loss_log = []
     val_loss_log = []
 
