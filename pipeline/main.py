@@ -2,9 +2,9 @@ from flask import Flask, jsonify, request
 import os, torch
 from pathlib import Path
 from models import get_densenet_121
-from utils import get_class
+from utils_ import get_class
 from datasets import get_test_transform
-
+from waitress import serve
 import random
 
 
@@ -42,7 +42,5 @@ def predict_():
 if __name__ == '__main__':
     val_transform = get_test_transform()
     m = get_densenet_121('cpu', '../checkpoints/DENSE2(128,128).ckpt')
-    app.run(
-        host='3.15.88.35',
-        port=5000
-    )
+    serve(app, host='0.0.0.0', port=8080, threads=1)
+
