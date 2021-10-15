@@ -2,8 +2,6 @@
 torch==1.8.1+cpu
 -f https://download.pytorch.org/whl/torch_stable.html
 torchvision==0.9.1+cpu
--f https://download.pytorch.org/whl/torch_stable.html
-torchaudio==0.8.1
 pyTelegramBotAPI==3.7.2
 pandas==1.0.1
 scikit-learn
@@ -13,3 +11,4 @@ Pillow
 utils==1.0.1
 albumentations==1.0.0
 flask
+gunicorn
