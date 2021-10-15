@@ -36,27 +36,23 @@ def get_empty_submit(path: str) -> pd.DataFrame:
 
 
 def generate_submit(
-        model: nn.Module,
-        model2: nn.Module,
+        models: list,
         test_loader: DataLoader,
         name: str,
         device: str = DEVICE,
         visual: bool = False) -> np.ndarray:
-    """Returns labels predicted by two model"""
-    model.eval()
-    model2.eval()
+    """Returns labels predicted by multiple models"""
+    for i in range(len(models)):
+        models[i].eval()
 
-    counter = 0
     y_pred = np.array([])
     with torch.no_grad():
-        for i, (filename, img) in enumerate(test_loader):
+        for i, (filename, img) in tqdm(enumerate(test_loader), total=len(test_loader)):
             img = img.to(device)
-
-            pred = model(img)
-            pred2 = model2(img)
-            pred_all = pred + pred2
+            pred_all = models[0](img)
+            for model in models[1:]:
+                pred_all += model(img)
             arg_pred = pred_all.argmax(1).cpu().numpy()
-
             y_pred = np.concatenate([y_pred, arg_pred], axis=0)
 
     return y_pred

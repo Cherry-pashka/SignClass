@@ -98,8 +98,8 @@ def get_train_transform() -> Callable:
     tran = [
 
         transforms.Resize(IMG_SIZE),
-        transforms.RandomRotation(3),
-        transforms.ColorJitter(brightness=0.5, contrast=0.2, saturation=0, hue=0),
+        transforms.RandomRotation(5),
+        transforms.ColorJitter(brightness=(0.5, 3), contrast=0, saturation=0, hue=0),
         transforms.GaussianBlur(1),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -109,8 +109,25 @@ def get_train_transform() -> Callable:
     return transforms.Compose(tran)
 
 
+def get_exptrain_transform() -> Callable:
+    """Function return experimental train transforms for images"""
+    tran = [
+
+        transforms.Resize(IMG_SIZE),
+        transforms.RandomRotation(5),
+        transforms.ColorJitter(brightness=(0.5, 3), contrast=(0.4, 1.5), saturation=0, hue=0),
+        transforms.GaussianBlur(1),
+        transforms.RandomGrayscale(p=0.2),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+
+    ]
+    return transforms.Compose(tran)
+
+
 def get_test_transform() -> Callable:
-    """Function return text transforms for images"""
+    """Function return test transforms for images"""
     tran = [
         transforms.Resize(IMG_SIZE),
         transforms.ToTensor(),

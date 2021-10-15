@@ -12,7 +12,7 @@ def get_resnet_152(device: str = DEVICE,
                    ) -> nn.Module:
     """Returns the pretrained model resnet152 and if checkpoint is specified load it"""
     model = models.resnet152(True)
-    model.fc = nn.Sequential(nn.Linear(2048, 182))
+    model.fc = nn.Sequential(nn.Linear(2048, 131))
     model = model.to(device)
     if ckpt_path:
         try:
@@ -28,7 +28,7 @@ def get_densenet_121(device: str = DEVICE,
                      ) -> nn.Module:
     """Returns the pretrained model densenet152 and if checkpoint is specified load it"""
     model = models.densenet121(True)
-    model.classifier = nn.Sequential(nn.Linear(1024, 182))
+    model.classifier = nn.Sequential(nn.Linear(1024, 131))
     model = model.to(device)
     if ckpt_path:
         try:
@@ -50,7 +50,7 @@ def get_vgg_19(device: str = DEVICE,
                                      nn.Linear(in_features=4096, out_features=4096, bias=True),
                                      nn.ReLU(inplace=True),
                                      nn.Dropout(p=0.5, inplace=False),
-                                     nn.Linear(in_features=4096, out_features=182, bias=True)
+                                     nn.Linear(in_features=4096, out_features=131, bias=True)
 
                                      )
     model = model.to(device)

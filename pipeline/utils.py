@@ -16,7 +16,7 @@ d = {'1': 'Предупреждающие знаки', '2': 'Знаки прио
      '5': 'Знаки особых предписаний', '6': 'Информационные знаки', '7': 'Знаки сервиса'}
 
 
-def get_class(path: str, model, ckpt_path: str = None, transform=None) -> str:
+def get_class(path: str, model, model2=None, ckpt_path: str = None, transform=None) -> str:
     """Returns class of image predicted by the model"""
     label2int, int2label = get_label_replacers(TRAIN_DATAFRAME_PATH)
     x = Image.open(path)
@@ -30,6 +30,9 @@ def get_class(path: str, model, ckpt_path: str = None, transform=None) -> str:
     model.eval()
     with torch.no_grad():
         pred = model(x)
+        if model2:
+            pred2 = model2(x)
+            pred += pred2
     return int2label[pred.argmax(1).numpy()[0]]
 
 

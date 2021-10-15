@@ -12,3 +12,4 @@ matplotlib
 Pillow
 utils==1.0.1
 albumentations==1.0.0
+flask

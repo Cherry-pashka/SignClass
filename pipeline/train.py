@@ -35,7 +35,7 @@ def plot_history(train_history: list, val_history: list, title: str = 'loss') ->
 def show_train_images():
     """Function shows images from train dataset"""
     df = pd.read_csv(TRAIN_DATAFRAME_PATH)
-    cols = 6
+    cols = 8
 
     labels = df['label'].unique()
     rows = (len(labels) // cols) + 1
@@ -50,7 +50,7 @@ def show_train_images():
                 break
 
             row = df[df['label'] == labels[idx]].iloc[0]
-            img = Image.open(os.path.join(FOLDER_PATH, row.filename))
+            img = Image.open(os.path.join(FOLDER_PATH, row.filename.replace("/", "\ "[0])))
             axs[i, j].imshow(img)
             axs[i, j].set_facecolor('xkcd:salmon')
             axs[i, j].set_facecolor((1.0, 0.47, 0.42))
