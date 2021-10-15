@@ -42,4 +42,7 @@ def predict_():
 if __name__ == '__main__':
     val_transform = get_test_transform()
     m = get_densenet_121('cpu', '../checkpoints/DENSE2(128,128).ckpt')
-    app.run(debug=True)
+    app.run(
+        host='3.15.88.35',
+        port=5000
+    )
