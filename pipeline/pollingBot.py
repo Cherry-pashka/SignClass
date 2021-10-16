@@ -1,12 +1,11 @@
 import telebot
 from telebot import types
 
-from datasets import get_test_transform, get_label_replacers
+from datasets import get_test_transform
 from models import get_densenet_121
-from utils_ import get_all
 from utils_ import get_class
 
-API_TOKEN = '2076321059:AAFbCEkxsyghtiXepPDBRo7Exzwtm-qFU1U'  # token of our bot
+API_TOKEN = '1724356931:AAFx-6NpgqFb7_X3DHI62H9-JZITm9fDBPg'  # token of our bot
 
 bot = telebot.TeleBot(API_TOKEN)
 val_transform = get_test_transform()
@@ -71,18 +70,48 @@ def print_classes(message):
 def da(call):
     """Function shows additional information about predicted sign"""
     # subtitle, img_url, link, title = get_all(call.data)
-    lines=call.data.lower()
-    line_count=call.data.count(',')+1
-    text = f'Данный знак обязывает вас продолжить движение по '+ (f'одной из {line_count} полос' if line_count>1 else 'единственной полосе')+'\n'
+    lines = call.data.lower()
+    line_count = call.data.count(',') + 1
+    text = f'Данный знак обязывает вас продолжить движение по ' + (
+        f'одной из {line_count} полос' if line_count > 1 else 'единственной полосе') + '\n'
     # if line_count==1:
-        # if call.data=='Прямо'
+    # if call.data=='Прямо'
+    lst = []
+    dirs = lines.split(',')
+    flag_raz = False
+    if 'лево' not in dirs[0]:
+        flag_raz = True
+    flag_st = False
+    flag_l = False
+    flag_r = False
+    for i in dirs:
+        if 'прямо' in i:
+            flag_st = True
+        if 'право' in i:
+            flag_r = True
+        if 'лево' in i:
+            flag_l = True
+    if not flag_st:
+        lst.append('прямо')
+    if not flag_l:
+        lst.append('налево')
+    if not flag_r:
+        lst.append('направо')
+    if flag_raz or lst:
+        text += 'Вы _не_ сможете '
+        if lst:
+            text += "проехать " + ', '.join(lst)
+        if flag_raz:
+            text += " и выполнить разворот"
+        text+='\n'
     if 'лево' in lines or 'право' in lines:
-        text += 'При повороте '+('налево или направо ' if ('лево' in lines and 'право' in lines) else 'налево ' if ('лево' in lines) else 'направо ' )+'на перекрестке - незабывайте уступать дорогу пешеходам, переходящим дорогу либо трамвайные пути'
+        text += 'При поворотах на перекрестке - уступайте дорогу пешеходам\n'
+
     kb = types.InlineKeyboardMarkup(row_width=1)
     kb.add(types.InlineKeyboardButton(callback_data='~' + call.data, text='Назад'))
     # kb.add(types.InlineKeyboardButton(url=link, text='Ещё подробнее'))
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                          text=call.data  + '\n' + text, reply_markup=kb)
+                          text=f'_{call.data}_' + '\n' + text, reply_markup=kb, parse_mode='markdown')
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('~'))
@@ -107,16 +136,6 @@ def send_photo(message):
     text = get_class(path, m, transform=val_transform)
     kb.add(types.InlineKeyboardButton(callback_data=text, text='Подробнее'))
     bot.send_message(message.chat.id, text, reply_markup=kb)
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == "__main__":
