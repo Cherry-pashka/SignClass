@@ -63,9 +63,7 @@ def print_classes(message):
 @bot.message_handler(commands=['directions'])
 def print_classes(message):
     """Message after command /directions"""
-    text = "Перед вами все направления, куда может завести наш бот"
-    label2int, _ = get_label_replacers()
-    text += '\n'.join(label2int.keys())
+    text = "Наш бот распознает любые знаки и может завести вам куда угодно)"
     bot.send_message(message.chat.id, text)
 
 
@@ -84,7 +82,7 @@ def da(call):
     kb.add(types.InlineKeyboardButton(callback_data='~' + call.data, text='Назад'))
     # kb.add(types.InlineKeyboardButton(url=link, text='Ещё подробнее'))
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
-                          text="<" + call.data + ">" + '\n\n' + text, reply_markup=kb)
+                          text=call.data  + '\n' + text, reply_markup=kb)
 
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith('~'))
